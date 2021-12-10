@@ -31,6 +31,10 @@
             {
                 "objects": "always-multiline"
             }
+        ],
+        "space-before-function-paren": [
+            "error",
+            "always"
         ]
     }
 }
