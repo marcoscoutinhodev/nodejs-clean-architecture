@@ -9,16 +9,22 @@ class HttpResponse {
         };
     }
 
-    static serverError (){
+    static serverError () {
         return {
             statusCode: 500,
         };
     }
 
-    static unauthorizedError (){
+    static unauthorizedError () {
         return {
             statusCode: 401,
             body: new UnauthorizedError(),
+        };
+    }
+
+    static ok () {
+        return {
+            statusCode: 200,
         };
     }
 }
