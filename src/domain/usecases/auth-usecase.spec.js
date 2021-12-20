@@ -17,6 +17,16 @@ const makeEncrypter = () => {
     return encrypterSpy;
 };
 
+const makeEncrypterWithErrors = () => {
+    class EncrypterSpy {
+        async compare () {
+            throw new Error();
+        }
+    }
+
+    return new EncrypterSpy;
+};
+
 const makeLoadUserByEmailRepository = () => {
     class LoadUserByEmailRepositorySpy {
         async load (email) {
@@ -35,6 +45,16 @@ const makeLoadUserByEmailRepository = () => {
     return loadUserByEmailRepositorySpy;
 };
 
+const makeLoadUserByEmailRepositoryWithErrors = () => {
+    class LoadUserByEmailRepositorySpy {
+        async load () {
+            throw new Error();
+        }
+    }
+
+    return new LoadUserByEmailRepositorySpy();
+};
+
 const makeTokenGenerator = () => {
     class TokenGeneratorSpy {
         async generate (userId) {
@@ -48,6 +68,16 @@ const makeTokenGenerator = () => {
     tokenGeneratorSpy.accessToken = "any_token";
 
     return tokenGeneratorSpy;
+};
+
+const makeTokenGeneratorWithErrors = () => {
+    class TokenGeneratorSpy {
+        async generate () {
+            throw new Error();
+        }
+    }
+
+    return new TokenGeneratorSpy;
 };
 
 const makeSut = () => {
@@ -164,6 +194,32 @@ describe("Auth UseCase", () => {
         for(const sut of suts) {
             const promise = sut.auth("any_email@email.com", "any_password");
     
+            expect(promise).rejects.toThrow();
+        }
+    });
+
+    test("Should throw if any dependency throws", async () => {
+        const loadUserByEmailRepository = makeLoadUserByEmailRepository();
+        const encrypter = makeEncrypter();
+
+        const suts = [].concat(
+            new AuthUseCase({
+                loadUserByEmailRepository: makeLoadUserByEmailRepositoryWithErrors(),
+            }),
+            new AuthUseCase({
+                loadUserByEmailRepository,
+                encrypter: makeEncrypterWithErrors(),
+            }),
+            new AuthUseCase({
+                loadUserByEmailRepository,
+                encrypter,
+                tokenGenerator: makeTokenGeneratorWithErrors(),
+            })
+        );
+
+        for(const sut of suts) {
+            const promise = sut.auth("any_email@email.com", "any_password");
+
             expect(promise).rejects.toThrow();
         }
     });
