@@ -21,16 +21,14 @@ class AuthUseCase {
             throw new InvalidParamError("loadUserByEmailRepository");
             
         const user = await this.loadUserByEmailRepository.load(email);
-
-        if(!user)
-            return null;
-
-        const isValid = await this.encrypter.compare(password, user.password);
+        const isValid = user && await this.encrypter.compare(password, user.password);
 
         if(!isValid)
             return null;
 
-        return await this.tokenGenerator.generate(user.id);
+        const accessToken = await this.tokenGenerator.generate(user.id);
+
+        return accessToken;
     }
 }
 
