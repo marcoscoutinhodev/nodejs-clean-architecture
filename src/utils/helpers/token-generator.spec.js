@@ -1,14 +1,17 @@
-require("dotenv/config");
 const jwt = require("jsonwebtoken");
 
 class TokenGenerator {
+    constructor (secret) {
+        this.secret = secret;
+    }
+
     async generate (id) {
-        return jwt.sign(id, process.env.JWT_KEY);
+        return jwt.sign(id, this.secret);
     }
 }
 
 const makeSut = () => {
-    return new TokenGenerator();
+    return new TokenGenerator("secret_key_development");
 };
 
 describe("Token Generator", () => {
@@ -25,5 +28,13 @@ describe("Token Generator", () => {
         const token = await sut.generate("any_id");
 
         expect(token).toBe(jwt.token);
+    });
+
+    test("Should call JWT with correct values", async () => {
+        const sut = makeSut();
+        await sut.generate("any_id");
+
+        expect(jwt.id).toBe("any_id");
+        expect(jwt.secret).toBe(sut.secret);
     });
 });
