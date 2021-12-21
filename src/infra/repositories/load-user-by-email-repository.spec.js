@@ -50,4 +50,11 @@ describe("LoadUserByEmail Repository", () => {
             _id: fakeUser.insertedId,
         });
     });
+
+    test("Should throws if userModel is not provided", async () => {
+        const sut = new LoadUserByEmailRepository();
+        const promise = sut.load("any_email@email.com");
+
+        expect(promise).rejects.toThrow();
+    });
 });
