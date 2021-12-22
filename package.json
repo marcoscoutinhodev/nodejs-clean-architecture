@@ -2,11 +2,11 @@
   "name": "api_clean-architecture",
   "version": "1.0.0",
   "description": "NodeJs API to study Clean Architecture",
-  "main": "index.js",
+  "main": "src/main/index.js",
   "author": "Marcos Vinicius Coutinho",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon src/main/index.js",
     "test": "jest --watchAll"
   },
   "dependencies": {
