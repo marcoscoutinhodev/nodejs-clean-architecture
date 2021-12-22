@@ -7,15 +7,15 @@ const makeSut = () => {
 };
 
 describe("LoadUserByEmail Repository", () => {
-    let db;
+    let userModel;
 
     beforeAll(async () => {
         await MongoHelper.connect(process.env.MONGO_URL);
-        db = await MongoHelper.getDb();
+        userModel = await MongoHelper.getCollection("users");
     });
 
     beforeEach(async () => {
-        await db.collection("users").deleteMany();
+        await userModel.deleteMany();
     });
 
     afterAll(async () => {
@@ -23,15 +23,15 @@ describe("LoadUserByEmail Repository", () => {
     });
 
     test("Should return null if user is not found", async () => {
-        const sut = makeSut(db);
+        const sut = makeSut(userModel);
         const user = await sut.load("invalid_email@email.com");
 
         expect(user).toBeNull();
     });
 
     test("Should return an user if user is found", async () => {        
-        const sut = makeSut(db);
-        const fakeUser = await db.collection("users").insertOne({
+        const sut = makeSut(userModel);
+        const fakeUser = await userModel.insertOne({
             email: "valid_email@email.com",
             password: "hashed_password",
             name: "any_name",
@@ -47,7 +47,7 @@ describe("LoadUserByEmail Repository", () => {
     });
 
     test("Should throws if email is not provided", async () => {
-        const sut = makeSut(db);
+        const sut = makeSut(userModel);
         const promise = sut.load();
 
         expect(promise).rejects.toThrow(new MissingParamError("email"));

@@ -7,15 +7,15 @@ const makeSut = () => {
 };
 
 describe("UpdateAccessToken Reposotory", () => {    
-    let db;
+    let userModel;
     
     beforeAll(async () => {
         await MongoHelper.connect(process.env.MONGO_URL);
-        db = await MongoHelper.getDb();
+        userModel = await MongoHelper.getCollection("users");
     });
 
     beforeEach(async () => {
-        await db.collection("users").deleteMany();
+        await userModel.deleteMany();
     });
 
     afterAll(async () => {
@@ -24,9 +24,8 @@ describe("UpdateAccessToken Reposotory", () => {
 
     test("Should update the user with the given accessToken", async () => {
         const sut = makeSut();
-        const userCollection = db.collection("users");
 
-        const fakeUser = await userCollection.insertOne({
+        const fakeUser = await userModel.insertOne({
             email: "valid_email@email.com",
             password: "valid_password",
             age: 28,
@@ -35,7 +34,7 @@ describe("UpdateAccessToken Reposotory", () => {
 
         await sut.update(fakeUser.insertedId, "valid_token");
 
-        const updatedFakeUser = await userCollection.findOne({ _id: fakeUser.insertedId });
+        const updatedFakeUser = await userModel.findOne({ _id: fakeUser.insertedId });
 
         expect(updatedFakeUser.accessToken).toBe("valid_token");
     });
