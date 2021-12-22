@@ -1,6 +1,13 @@
-require("dotenv/config");
-const app = require("./config/app");
+const MongoHelper = require("../infra/helpers/mongo-helper");
+const env = require("./config/env");
 
-app.listen(process.env.SERVER_PORT_DEV, () => {
-    console.log("Server is running...");
-});
+MongoHelper
+    .connect(env.mongoUrl)
+    .then(() => {
+        const app = require("./config/app");
+        
+        app.listen(env.serverPortDev, () => {
+            console.log("Server is running...");
+        });
+    })
+    .catch(console.error);
