@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/main/index.js",
-    "test": "jest --watchAll"
+    "test": "jest --watch --runInBand"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
