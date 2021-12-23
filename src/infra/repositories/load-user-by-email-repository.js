@@ -13,6 +13,7 @@ class LoadUserByEmailRepository {
         }, {
             projection: {
                 _id: 1,
+                password: true,
             },
         });
 
